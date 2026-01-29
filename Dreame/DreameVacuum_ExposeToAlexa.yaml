@@ -1,64 +1,6 @@
 blueprint:
-  name: "🎙️ Alexa: Dreame Room Cleaning Scripts"
-  description: |
-    ## 🚀 What this blueprint does
-    Creates a **custom script** to control your Dreame robot with voice commands via Alexa!
-    
-    ✅ **Targeted cleaning** of a specific room  
-    ✅ **6 cleaning modes** available  
-    ✅ **Alexa ready** - no additional configuration needed  
-    ✅ **Easily clonable** for multiple rooms  
-    
-    ## 🏠 Available Cleaning Modes
-    
-    | **Mode** | **Description** | **Technology** |
-    |:---:|:---:|:---:|
-    | 🧹 **Vacuum** | Vacuum only | Custom Cleaning |
-    | 💧 **Mop** | Mop only | Custom Cleaning |
-    | ✨ **Cleaning** | Vacuum + Mop | CleanGenius |
-    | 🔥 **Deep Cleaning** | Vacuum + Intensive Mop | CleanGenius Deep |
-    
-    ## 📋 Prerequisites
-    1. ✅ Dreame robot configured in Home Assistant
-    2. ✅ Room helper created (use the "🏠 Room Helper Creation" blueprint)
-    3. ✅ Alexa configured (Nabu Casa, Lambda, or Matter)
-    
-    ## 🎯 How to Use It
-    
-    ### Step 1: Configure the Script
-    1. **Select** your robot and required entities
-    2. **Enter** the room ID (find it in your room helper)
-    3. **Choose** the cleaning mode
-    4. **Save** the script with a descriptive name
-    
-    ### Step 2: Expose to Alexa
-    - **Nabu Casa**: Script will appear automatically
-    - **Matter**: Add "matter" label to the script
-    - **Lambda**: Configure in your AWS setup
-    
-    ### Step 3: Voice Commands
-    **"Alexa, start [script name]"**  
-    **"Alexa, open [script name]"**
-    
-    ## 💡 Practical Examples
-    
-    ### Scenario: Bathroom Cleaning
-    1. **Create** script: "Vacuum Bathroom" (Room ID: 5, Mode: Vacuum)
-    2. **Clone** script: "Clean Bathroom" (same ID, Mode: Cleaning)
-    3. **Commands**: 
-       - "Alexa, start vacuum bathroom" 
-       - "Alexa, start clean bathroom"
-    
-    ### Scenario: Complete Kitchen
-    - Script 1: "Clean Kitchen" → "Alexa, start clean kitchen"
-    - Script 2: "Deep Clean Kitchen" → "Alexa, start deep clean kitchen"
-    
-    ## ⚙️ Technical Notes
-    - **CleanGenius**: Advanced mode that combines vacuuming and mopping
-    - **Custom Cleaning**: Basic mode for separate vacuuming or mopping
-    - **Timeout**: 10 seconds for setting changes
-    - **Validation**: Automatically checks that room ID is valid
-    
+  name: "Dreame Room Cleaning Script"
+  description: "Configure cleaning details here, then using automation, call this script at the hour and day you want"
   domain: script
   source_url: https://raw.githubusercontent.com/Barley194/homeassistant_blueprints/refs/heads/main/Dreame/DreameVacuum_ExposeToAlexa.yaml
 
@@ -107,7 +49,7 @@ blueprint:
         - `number.dreame_wetness_level`
       selector:
         entity:
-          domain: select
+          domain: number
 
     cleaning_route_select:
       name: "Cleaning Route Entity"
