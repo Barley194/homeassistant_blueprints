@@ -74,6 +74,7 @@ blueprint:
     morning_rooms:
       name: Morning rooms
       description: Select rooms to clean (IDs are parsed automatically)
+      default: ""
       selector:
         select:
           multiple: true
@@ -137,6 +138,7 @@ blueprint:
     evening_rooms:
       name: Evening rooms
       description: Select rooms to clean (IDs are parsed automatically)
+      default: ""
       selector:
         select:
           multiple: true
@@ -157,26 +159,3 @@ blueprint:
               value: "7"
             - label: "8 – Corridor"
               value: "8"
-
-    blockA_enabled:
-      name: Enable block A
-      default: false
-      selector:
-        boolean: {}
-
-    blockA_time:
-      name: Block A time
-      default: "09:00:00"
-      selector:
-        time: {}
-
-    blockA_days:
-      name: Block A days
-      default: []
-      selector:
-        select:
-          options: [mon, tue, wed, thu, fri, sat, sun]
-          multiple: true
-
-    blockA_preset:
-      name: Block A mod
