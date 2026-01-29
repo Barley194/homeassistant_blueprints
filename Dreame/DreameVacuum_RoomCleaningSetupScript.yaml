@@ -67,7 +67,7 @@ blueprint:
       name: "🏠 Room ID"
       description: |
         **Enter the numeric ID** of the room you want to clean.
-
+      default: ""
       selector:
         select:
           multiple: true
