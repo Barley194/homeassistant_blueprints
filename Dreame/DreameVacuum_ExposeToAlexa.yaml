@@ -5,7 +5,7 @@ blueprint:
     Creates a **custom script** to control your Dreame robot with voice commands via Alexa!
     
     ✅ **Targeted cleaning** of a specific room  
-    ✅ **4 cleaning modes** available  
+    ✅ **6 cleaning modes** available  
     ✅ **Alexa ready** - no additional configuration needed  
     ✅ **Easily clonable** for multiple rooms  
     
@@ -97,6 +97,30 @@ blueprint:
         entity:
           domain: select
 
+  wetness_level_select:
+    name: "💧 Wetness Level Entity"
+    description: |
+      Select the entity that controls **Wetness Level**.
+
+      💡 **How to find it**: Look among your robot's `select` entities, usually:
+      - `number.robot_name_wetness_level`
+      - `number.dreame_wetness_level`
+    selector:
+      entity:
+        domain: select
+
+  cleaning_route_select:
+    name: "Cleaning Route Entity"
+    description: |
+      Select the entity that controls **Cleaning Route**. Standard or Quick.
+
+      💡 **How to find it**: Look among your robot's `select` entities, usually:
+      - `select.robot_name_cleaning_route`
+      - `select.dreame_cleaning_route`
+    selector:
+      entity:
+        domain: select
+
     room_id:
       name: "🏠 Room ID"
       description: |
@@ -122,8 +146,10 @@ blueprint:
         
         🧹 **Vacuum**: Vacuum only (CleanGenius OFF)
         💧 **Mop**: Mop only (CleanGenius OFF)  
-        ✨ **Cleaning**: Vacuum + Mop simultaneously
-        🔥 **Deep Cleaning**: Vacuum + Intensive Mop
+        🧹 **Vacuum** + 💧 **Mop**: Vacuum and mop simultaneously (CleanGenius OFF)  
+        💧 **Mop** after 🧹 **Vacuum**: Mop after vacuuming (CleanGenius OFF)  
+        ✨ **Cleaning**: Vacuum + Mop simultaneously (CleanGenius ON)  
+        🔥 **Deep Cleaning**: Vacuum + Intensive Mop (CleanGenius ON)
       selector:
         select:
           options:
@@ -131,11 +157,41 @@ blueprint:
               value: "Vacuum"
             - label: "💧 Mop" 
               value: "Mop"
-            - label: "✨ Cleaning"
+            - label: "🧹 Vacuum + 💧 Mop"
+              value: "sweeping and mopping"
+            - label: "💧 Mop after 🧹 Vacuum"
+              value: "mopping after sweeping"
+            - label: "✨ CleanGenius Routine Cleaning"
               value: "Cleaning"
-            - label: "🔥 Deep Cleaning"
+            - label: "🔥CleanGenius Deep Cleaning"
               value: "Deep Cleaning"
-      default: "Cleaning"
+      default: "sweeping and mopping"
+
+  wetness_level:
+    name: "💧 Mopping Wetness Level"
+    description: |
+      **Enter the number of the wetness level for mopping.**
+    selector:
+      number:
+        min: 1
+        max: 32
+        mode: slider
+    default: 25
+
+  cleaning_route:
+    name: "Cleaning Route"
+    description: |
+      Choose your desired cleaning route:
+      
+      Standard or Quick
+    selector:
+      select:
+        options:
+          - label: "Standard"
+            value: "standard"
+          - label: "Quick"
+            value: "quick"
+    default: "standard"
 
 icon: mdi:robot-vacuum
 
@@ -143,16 +199,20 @@ mode: single
 
 sequence:
   - variables:
-      _vac: !input vacuum_entity
-      _cg_sel: !input cleangenius_select
-      _cm_sel: !input cleaning_mode_select
-      _rid: !input room_id
+      _vacuum: !input vacuum_entity
+      _cleangenius_mode: !input cleangenius_select
+      _manual_mode: !input cleaning_mode_select
+      _roomid: !input room_id
+      _wetness_level_select: !input wetness_level_select
+      _wetness_level: !input wetness_level
+      _cleaning_route_select: !input cleaning_route_select
+      _cleaning_route: !input cleaning_route
       _preset_raw: !input cleaning_preset
-      preset: "{{ (_preset_raw or 'Cleaning') | lower }}"
+      _preset: "{{ (_preset_raw or 'sweeping and mopping') | lower }}"
 
   # Validate room ID
   - condition: template
-    value_template: "{{ (_rid | int(default=-1)) >= 0 }}"
+    value_template: "{{ (_roomid | int(default=-1)) >= 0 }}"
     alias: "Verify room ID validity"
 
   # Branch based on preset
@@ -160,107 +220,245 @@ sequence:
       # DEEP CLEANING → CleanGenius deep_cleaning
       - conditions:
           - condition: template
-            value_template: "{{ preset == 'deep cleaning' }}"
+            value_template: "{{ _preset == 'deep cleaning' }}"
         sequence:
           - alias: "Set CleanGenius Deep Cleaning"
             service: select.select_option
             target:
-              entity_id: "{{ _cg_sel }}"
+              entity_id: "{{ _cleangenius_mode }}"
             data:
               option: deep_cleaning
 
           - alias: "Wait for CleanGenius mode change"
             wait_template: >-
-              {{ states(_cg_sel) in ['deep_cleaning','unknown','unavailable','none'] }}
+              {{ states(_cleangenius_mode) in ['deep_cleaning','unknown','unavailable','none'] }}
             timeout: "00:00:10"
 
           - alias: "Start deep cleaning room"
             service: dreame_vacuum.vacuum_clean_segment
             target:
-              entity_id: "{{ _vac }}"
+              entity_id: "{{ _vacuum }}"
             data:
               segments:
-                - "{{ _rid | int }}"
+                - "{{ _roomid | int }}"
 
-      # CLEANING (standard) → CleanGenius left as-is (no change), then start
+      # CLEANING  → CleanGenius set to Routine Cleaning, then start
       - conditions:
           - condition: template
-            value_template: "{{ preset == 'cleaning' }}"
+            value_template: "{{ _preset == 'cleaning' }}"
         sequence:
+          - alias: "Set CleanGenius Routine Cleaning"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleangenius_mode }}"
+            data:
+              option: routine_cleaning
           - alias: "Start standard cleaning room"
             service: dreame_vacuum.vacuum_clean_segment
             target:
-              entity_id: "{{ _vac }}"
+              entity_id: "{{ _vacuum }}"
             data:
               segments:
-                - "{{ _rid | int }}"
+                - "{{ _roomid | int }}"
 
       # VACUUM → CleanGenius OFF → cleaning_mode sweeping → start
       - conditions:
           - condition: template
-            value_template: "{{ preset == 'vacuum' }}"
+            value_template: "{{ _preset == 'vacuum' }}"
         sequence:
           - alias: "Disable CleanGenius"
             service: select.select_option
             target:
-              entity_id: "{{ _cg_sel }}"
+              entity_id: "{{ _cleangenius_mode }}"
             data:
               option: 'off'
 
           - alias: "Wait for CleanGenius disable"
             wait_template: >-
-              {{ states(_cg_sel) in ['off','unknown','unavailable','none'] }}
+              {{ states(_cleangenius_mode) in ['off','unknown','unavailable','none'] }}
             timeout: "00:00:10"
 
           - alias: "Set vacuum mode"
             service: select.select_option
             target:
-              entity_id: "{{ _cm_sel }}"
+              entity_id: "{{ _manual_mode }}"
             data:
               option: sweeping
+
+          - delay: "00:00:01"
+
+          - alias: "Set cleaning route"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleaning_route_select }}"
+            data:
+              option: "{{ _cleaning_route }}"
 
           - delay: "00:00:01"
 
           - alias: "Start vacuum room"
             service: dreame_vacuum.vacuum_clean_segment
             target:
-              entity_id: "{{ _vac }}"
+              entity_id: "{{ _vacuum }}"
             data:
               segments:
-                - "{{ _rid | int }}"
+                - "{{ _roomid | int }}"
 
       # MOP → CleanGenius OFF → cleaning_mode mopping → start
       - conditions:
           - condition: template
-            value_template: "{{ preset == 'mop' }}"
+            value_template: "{{ _preset == 'mop' }}"
         sequence:
           - alias: "Disable CleanGenius"
             service: select.select_option
             target:
-              entity_id: "{{ _cg_sel }}"
+              entity_id: "{{ _cleangenius_mode }}"
             data:
               option: 'off'
 
           - alias: "Wait for CleanGenius disable"
             wait_template: >-
-              {{ states(_cg_sel) in ['off','unknown','unavailable','none'] }}
+              {{ states(_cleangenius_mode) in ['off','unknown','unavailable','none'] }}
             timeout: "00:00:10"
 
           - alias: "Set mop mode"
             service: select.select_option
             target:
-              entity_id: "{{ _cm_sel }}"
+              entity_id: "{{ _manual_mode }}"
             data:
               option: mopping
+
+          - delay: "00:00:01"
+
+          - alias: "Set wetness level"
+            service: number.set_value
+            target:
+              entity_id: "{{ _wetness_level_select }}"
+            data:
+              option: "{{ _wetness_level }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Set cleaning route"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleaning_route_select }}"
+            data:
+              option: "{{ _cleaning_route }}"
 
           - delay: "00:00:01"
 
           - alias: "Start mop room"
             service: dreame_vacuum.vacuum_clean_segment
             target:
-              entity_id: "{{ _vac }}"
+              entity_id: "{{ _vacuum }}"
             data:
               segments:
-                - "{{ _rid | int }}"
+                - "{{ _roomid | int }}"
+
+      # Sweeping and Mopping manual → CleanGenius OFF → cleaning_mode mopping → start
+      - conditions:
+          - condition: template
+            value_template: "{{ _preset == 'sweeping and mopping' }}"
+        sequence:
+          - alias: "Disable CleanGenius"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleangenius_mode }}"
+            data:
+              option: 'off'
+
+          - alias: "Wait for CleanGenius disable"
+            wait_template: >-
+              {{ states(_cleangenius_mode) in ['off','unknown','unavailable','none'] }}
+            timeout: "00:00:10"
+
+          - alias: "Set sweeping and mopping mode"
+            service: select.select_option
+            target:
+              entity_id: "{{ _manual_mode }}"
+            data:
+              option: sweeping_and_mopping
+
+          - delay: "00:00:01"
+
+          - alias: "Set wetness level"
+            service: number.set_value
+            target:
+              entity_id: "{{ _wetness_level_select }}"
+            data:
+              option: "{{ _wetness_level }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Set cleaning route"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleaning_route_select }}"
+            data:
+              option: "{{ _cleaning_route }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Start sweeping and mopping room"
+            service: dreame_vacuum.vacuum_clean_segment
+            target:
+              entity_id: "{{ _vacuum }}"
+            data:
+              segments:
+                - "{{ _roomid | int }}"
+
+      # mopping after sweeping manual → CleanGenius OFF → cleaning_mode mopping after sweeping → start
+      - conditions:
+          - condition: template
+            value_template: "{{ _preset == 'mopping after sweeping' }}"
+        sequence:
+          - alias: "Disable CleanGenius"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleangenius_mode }}"
+            data:
+              option: 'off'
+
+          - alias: "Wait for CleanGenius disable"
+            wait_template: >-
+              {{ states(_cleangenius_mode) in ['off','unknown','unavailable','none'] }}
+            timeout: "00:00:10"
+
+          - alias: "Set sweeping and mopping mode"
+            service: select.select_option
+            target:
+              entity_id: "{{ _manual_mode }}"
+            data:
+              option: mopping_after_sweeping
+
+          - delay: "00:00:01"
+
+          - alias: "Set wetness level"
+            service: number.set_value
+            target:
+              entity_id: "{{ _wetness_level_select }}"
+            data:
+              option: "{{ _wetness_level }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Set cleaning route"
+            service: select.select_option
+            target:
+              entity_id: "{{ _cleaning_route_select }}"
+            data:
+              option: "{{ _cleaning_route }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Start sweeping and mopping room"
+            service: dreame_vacuum.vacuum_clean_segment
+            target:
+              entity_id: "{{ _vacuum }}"
+            data:
+              segments:
+                - "{{ _roomid | int }}"
+
 
     default: []
