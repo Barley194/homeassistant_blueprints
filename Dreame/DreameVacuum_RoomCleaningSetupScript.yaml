@@ -189,8 +189,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
       # CLEANING  → CleanGenius set to Routine Cleaning, then start
       - conditions:
@@ -208,8 +208,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
       # VACUUM → CleanGenius OFF → cleaning_mode sweeping → start
       - conditions:
@@ -251,8 +251,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
       # MOP → CleanGenius OFF → cleaning_mode mopping → start
       - conditions:
@@ -303,8 +303,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
       # Sweeping and Mopping manual → CleanGenius OFF → cleaning_mode mopping → start
       - conditions:
@@ -355,8 +355,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
       # mopping after sweeping manual → CleanGenius OFF → cleaning_mode mopping after sweeping → start
       - conditions:
@@ -407,8 +407,8 @@ sequence:
             target:
               entity_id: "{{ _vacuum }}"
             data:
-              segments:
-                - "{{ _roomid | int }}"
+              segments: >
+                {{ _roomid | map('int') | list }}
 
 
     default: []
