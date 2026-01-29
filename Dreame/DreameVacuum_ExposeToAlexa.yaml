@@ -60,7 +60,7 @@ blueprint:
     - **Validation**: Automatically checks that room ID is valid
     
   domain: script
-  source_url: https://raw.githubusercontent.com/Magnum9O/HA_BluePrints/main/Dreame/ENG/2_ExposeToAlexa.yaml
+  source_url: https://raw.githubusercontent.com/Barley194/homeassistant_blueprints/refs/heads/main/Dreame/DreameVacuum_ExposeToAlexa.yaml
 
   input:
     vacuum_entity:
@@ -97,29 +97,29 @@ blueprint:
         entity:
           domain: select
 
-  wetness_level_select:
-    name: "💧 Wetness Level Entity"
-    description: |
-      Select the entity that controls **Wetness Level**.
+    wetness_level_select:
+      name: "💧 Wetness Level Entity"
+      description: |
+        Select the entity that controls **Wetness Level**.
+  
+        💡 **How to find it**: Look among your robot's `select` entities, usually:
+        - `number.robot_name_wetness_level`
+        - `number.dreame_wetness_level`
+      selector:
+        entity:
+          domain: select
 
-      💡 **How to find it**: Look among your robot's `select` entities, usually:
-      - `number.robot_name_wetness_level`
-      - `number.dreame_wetness_level`
-    selector:
-      entity:
-        domain: select
-
-  cleaning_route_select:
-    name: "Cleaning Route Entity"
-    description: |
-      Select the entity that controls **Cleaning Route**. Standard or Quick.
-
-      💡 **How to find it**: Look among your robot's `select` entities, usually:
-      - `select.robot_name_cleaning_route`
-      - `select.dreame_cleaning_route`
-    selector:
-      entity:
-        domain: select
+    cleaning_route_select:
+      name: "Cleaning Route Entity"
+      description: |
+        Select the entity that controls **Cleaning Route**. Standard or Quick.
+  
+        💡 **How to find it**: Look among your robot's `select` entities, usually:
+        - `select.robot_name_cleaning_route`
+        - `select.dreame_cleaning_route`
+      selector:
+        entity:
+          domain: select
 
     room_id:
       name: "🏠 Room ID"
@@ -182,7 +182,6 @@ blueprint:
     name: "Cleaning Route"
     description: |
       Choose your desired cleaning route:
-      
       Standard or Quick
     selector:
       select:
