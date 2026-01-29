@@ -5,10 +5,9 @@ blueprint:
     based on a daily or weekly schedule, with the option to
     include presence checks and a cleaning-state tracking system.
   domain: automation
-  source_url: https://raw.githubusercontent.com/Magnum9O/HA_BluePrints/main/Dreame/ENG/3_CleaningAutomation.yaml
+  source_url: https://raw.githubusercontent.com/Barley194/homeassistant_blueprints/refs/heads/main/Dreame/ENG/3_CleaningAutomation.yaml
 
   input:
-
     vacuum_entity:
       name: Dreame Robot
       description: Select your Dreame vacuum.
@@ -22,19 +21,6 @@ blueprint:
       selector:
         entity:
           domain: camera
-
-    cleaned_today_helper:
-      name: Cleaning Performed flag
-      description: Boolean that turns on after cleaning and is reset daily.
-      selector:
-        entity:
-          domain: input_boolean
-
-    reset_time:
-      name: Daily reset time
-      default: "23:59:00"
-      selector:
-        time: {}
 
     presence_helper:
       name: Presence helper (optional)
@@ -87,7 +73,9 @@ blueprint:
 
     morning_rooms:
       name: Morning rooms
-      default: ""
+      selector:
+        entity:
+          domain: input_select
 
     evening_enabled:
       name: Enable evening schedule
@@ -130,7 +118,9 @@ blueprint:
 
     evening_rooms:
       name: Evening rooms
-      default: ""
+      selector:
+        entity:
+          domain: input_select
 
     blockA_enabled:
       name: Enable block A
