@@ -167,30 +167,30 @@ blueprint:
               value: "Deep Cleaning"
       default: "sweeping and mopping"
 
-  wetness_level:
-    name: "💧 Mopping Wetness Level"
-    description: |
-      **Enter the number of the wetness level for mopping.**
-    selector:
-      number:
-        min: 1
-        max: 32
-        mode: slider
-    default: 25
+    wetness_level:
+      name: "💧 Mopping Wetness Level"
+      description: |
+        **Enter the number of the wetness level for mopping.**
+      selector:
+        number:
+          min: 1
+          max: 32
+          mode: slider
+      default: 25
 
-  cleaning_route:
-    name: "Cleaning Route"
-    description: |
-      Choose your desired cleaning route:
-      Standard or Quick
-    selector:
-      select:
-        options:
-          - label: "Standard"
-            value: "standard"
-          - label: "Quick"
-            value: "quick"
-    default: "standard"
+    cleaning_route:
+      name: "Cleaning Route"
+      description: |
+        Choose your desired cleaning route:
+        Standard or Quick
+      selector:
+        select:
+          options:
+            - label: "Standard"
+              value: "standard"
+            - label: "Quick"
+              value: "quick"
+      default: "standard"
 
 icon: mdi:robot-vacuum
 
