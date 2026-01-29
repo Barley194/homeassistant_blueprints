@@ -73,9 +73,27 @@ blueprint:
 
     morning_rooms:
       name: Morning rooms
+      description: Select rooms to clean (IDs are parsed automatically)
       selector:
-        entity:
-          domain: input_select
+        select:
+          multiple: true
+          options:
+            - label: "1 – Primary Bedroom"
+              value: "1"
+            - label: "2 – Kitchen"
+              value: "2"
+            - label: "3 – Bathroom 2"
+              value: "3"
+            - label: "4 – Bathroom"
+              value: "4"
+            - label: "5 – Closet"
+              value: "5"
+            - label: "6 – Office"
+              value: "6"
+            - label: "7 – Living Room"
+              value: "7"
+            - label: "8 – Corridor"
+              value: "8"
 
     evening_enabled:
       name: Enable evening schedule
@@ -118,9 +136,27 @@ blueprint:
 
     evening_rooms:
       name: Evening rooms
+      description: Select rooms to clean (IDs are parsed automatically)
       selector:
-        entity:
-          domain: input_select
+        select:
+          multiple: true
+          options:
+            - label: "1 – Primary Bedroom"
+              value: "1"
+            - label: "2 – Kitchen"
+              value: "2"
+            - label: "3 – Bathroom 2"
+              value: "3"
+            - label: "4 – Bathroom"
+              value: "4"
+            - label: "5 – Closet"
+              value: "5"
+            - label: "6 – Office"
+              value: "6"
+            - label: "7 – Living Room"
+              value: "7"
+            - label: "8 – Corridor"
+              value: "8"
 
     blockA_enabled:
       name: Enable block A
