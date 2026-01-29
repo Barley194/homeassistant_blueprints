@@ -67,19 +67,27 @@ blueprint:
       name: "🏠 Room ID"
       description: |
         **Enter the numeric ID** of the room you want to clean.
-        
-        🔍 **How to find it**: 
-        1. Use the "🏠 Room Helper Creation" blueprint
-        2. Check the created helper to see "Room Name (**ID**)"
-        3. Enter only the number in parentheses
-        
-        📝 **Example**: If you see "Kitchen (3)", enter **3**
+
       selector:
-        number:
-          min: 0
-          max: 999
-          mode: box
-      default: 0
+        select:
+          multiple: true
+          options:
+            - label: "1 – Primary Bedroom"
+              value: "1"
+            - label: "2 – Kitchen"
+              value: "2"
+            - label: "3 – Bathroom 2"
+              value: "3"
+            - label: "4 – Bathroom"
+              value: "4"
+            - label: "5 – Closet"
+              value: "5"
+            - label: "6 – Office"
+              value: "6"
+            - label: "7 – Living Room"
+              value: "7"
+            - label: "8 – Corridor"
+              value: "8"
 
     cleaning_preset:
       name: "🎯 Cleaning Mode"
