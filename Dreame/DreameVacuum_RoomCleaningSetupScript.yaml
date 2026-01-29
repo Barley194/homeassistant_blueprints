@@ -1,6 +1,6 @@
 blueprint:
-  name: "Dreame Room Cleaning Script"
-  description: "Configure cleaning details here, then using automation, call this script at the hour and day you want"
+  name: "✨ Dreame Room Cleaning Setup Script"
+  description: "✨✨ Configure cleaning details here, then using automation, call this script at the hour and day you want ✨✨"
   domain: script
   source_url: https://raw.githubusercontent.com/Barley194/homeassistant_blueprints/refs/heads/main/Dreame/DreameVacuum_ExposeToAlexa.yaml
 
