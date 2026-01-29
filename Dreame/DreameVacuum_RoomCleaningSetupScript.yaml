@@ -161,7 +161,8 @@ sequence:
 
   # Validate room ID
   - condition: template
-    value_template: "{{ (_roomid | int(default=-1)) >= 0 }}"
+    value_template: >
+      {{ _roomid | select('string') | map('int', -1) | min >= 0 }}
     alias: "Verify room ID validity"
 
   # Branch based on preset
