@@ -72,22 +72,20 @@ blueprint:
         select:
           multiple: true
           options:
-            - label: "1 – Primary Bedroom"
+            - label: "1 – Living Room"
               value: "1"
-            - label: "2 – Kitchen"
+            - label: "2 – Closet"
               value: "2"
-            - label: "3 – Bathroom 2"
+            - label: "3 – Corridor"
               value: "3"
-            - label: "4 – Bathroom"
+            - label: "4 – Office"
               value: "4"
-            - label: "5 – Closet"
+            - label: "5 – Kitchen"
               value: "5"
-            - label: "6 – Office"
+            - label: "6 – Bathroom"
               value: "6"
-            - label: "7 – Living Room"
+            - label: "7 – Primary Bedroom"
               value: "7"
-            - label: "8 – Corridor"
-              value: "8"
 
     cleaning_preset:
       name: "🎯 Cleaning Mode"
