@@ -283,7 +283,7 @@ sequence:
             target:
               entity_id: "{{ _wetness_level_select }}"
             data:
-              option: "{{ _wetness_level }}"
+              value: "{{ _wetness_level }}"
 
           - delay: "00:00:01"
 
@@ -335,7 +335,7 @@ sequence:
             target:
               entity_id: "{{ _wetness_level_select }}"
             data:
-              option: "{{ _wetness_level }}"
+              value: "{{ _wetness_level }}"
 
           - delay: "00:00:01"
 
@@ -387,7 +387,7 @@ sequence:
             target:
               entity_id: "{{ _wetness_level_select }}"
             data:
-              option: "{{ _wetness_level }}"
+              value: "{{ _wetness_level }}"
 
           - delay: "00:00:01"
 
